@@ -150,7 +150,7 @@ with gr.Blocks(css=css) as demo:
     gr.on(
         triggers=[run_button.click, prompt.submit],
         fn = infer,
-        inputs = [prompt, checkpoint, seed, num_images_per_prompt, ramdomize_seed, guidance_scale, width, height, num_inference_steps],
+        inputs = [prompt, checkpoint, seed, guidance_scale, num_images_per_prompt, ramdomize_seed, width, height, num_inference_steps],
         outputs = [result, seed]
     )
 demo.launch()
