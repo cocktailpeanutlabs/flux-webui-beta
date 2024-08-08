@@ -25,7 +25,7 @@ nav {
 """
 class QuantizedFluxTransformer2DModel(QuantizedDiffusersModel):
     base_class = FluxTransformer2DModel
-def infer(prompt, checkpoint="black-forest-labs/FLUX.1-schnell", seed=42, num_images_per_prompt=1, randomize_seed=False, width=1024, height=1024, num_inference_steps=4, progress=gr.Progress(track_tqdm=True)):
+def infer(prompt, checkpoint="black-forest-labs/FLUX.1-schnell", seed=42, guidance_scale=0.0, num_images_per_prompt=1, randomize_seed=False, width=1024, height=1024, num_inference_steps=4, progress=gr.Progress(track_tqdm=True)):
     global pipe
     global selected
     # if the new checkpoint is different from the selected one, re-instantiate the pipe
@@ -70,7 +70,7 @@ def infer(prompt, checkpoint="black-forest-labs/FLUX.1-schnell", seed=42, num_im
             num_inference_steps = num_inference_steps,
             generator = generator,
             num_images_per_prompt = num_images_per_prompt,
-            guidance_scale=0.0
+            guidance_scale=guidance_scale
     ).images
     print(f"Inference finished!")
     devicetorch.empty_cache(torch)
@@ -140,11 +140,17 @@ with gr.Blocks(css=css) as demo:
                 step=1,
                 value=4,
             )
+            guidance_scale = gr.Number(
+                label="Guidance Scale",
+                minimum=0,
+                maximum=50,
+                value=0.0,
+            )
         checkpoint.change(fn=update_slider, inputs=[checkpoint], outputs=[num_inference_steps])
     gr.on(
         triggers=[run_button.click, prompt.submit],
         fn = infer,
-        inputs = [prompt, checkpoint, seed, num_images_per_prompt, randomize_seed, width, height, num_inference_steps],
+        inputs = [prompt, checkpoint, seed, num_images_per_prompt, ramdomize_seed, guidance_scale, width, height, num_inference_steps],
         outputs = [result, seed]
     )
 demo.launch()
