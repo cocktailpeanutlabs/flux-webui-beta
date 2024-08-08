@@ -50,7 +50,7 @@ def infer(prompt, checkpoint="black-forest-labs/FLUX.1-schnell", seed=42, num_im
         pipe = FluxPipeline.from_pretrained(bfl_repo, transformer=None, torch_dtype=dtype)
         print("initialized!")
         pipe.transformer = transformer
-        pipe.to(device)
+        #pipe.to(device)
 
         if device == "cuda":
             print(f"enable model cpu offload...")
