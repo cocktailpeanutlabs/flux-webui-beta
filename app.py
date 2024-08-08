@@ -41,17 +41,26 @@ def infer(prompt, checkpoint="black-forest-labs/FLUX.1-schnell", seed=42, num_im
             if device == "mps":
                 transformer = QuantizedFluxTransformer2DModel.from_pretrained("cocktailpeanut/flux1-schnell-qint8")
             else:
+                print("initializing quantized transformer...")
                 transformer = QuantizedFluxTransformer2DModel.from_pretrained("cocktailpeanut/flux1-schnell-q8")
+                print("initialized!")
+        print(f"moving device to {device}")
         transformer.to(device=device, dtype=dtype)
+        print(f"initializing pipeline...")
         pipe = FluxPipeline.from_pretrained(bfl_repo, transformer=None, torch_dtype=dtype)
+        print("initialized!")
         pipe.transformer = transformer
         pipe.to(device)
+
         if device == "cuda":
+            print(f"enable model cpu offload...")
             pipe.enable_model_cpu_offload()
+            print(f"done!")
         selected = checkpoint
     if randomize_seed:
         seed = random.randint(0, MAX_SEED)
     generator = torch.Generator().manual_seed(seed)
+    print(f"Started the inference. Wait...")
     images = pipe(
             prompt = prompt,
             width = width,
@@ -61,7 +70,9 @@ def infer(prompt, checkpoint="black-forest-labs/FLUX.1-schnell", seed=42, num_im
             num_images_per_prompt = num_images_per_prompt,
             guidance_scale=0.0
     ).images
+    print(f"Inference finished!")
     devicetorch.empty_cache(torch)
+    print(f"emptied cache")
     return images, seed
 def update_slider(checkpoint, num_inference_steps):
     if checkpoint == "sayakpaul/FLUX.1-merged":
