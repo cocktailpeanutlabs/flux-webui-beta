@@ -35,7 +35,9 @@ def infer(prompt, checkpoint="black-forest-labs/FLUX.1-schnell", seed=42, num_im
             if device == "mps":
                 transformer = QuantizedFluxTransformer2DModel.from_pretrained("cocktailpeanut/flux1-merged-qint8")
             else:
+                print("initializing quantized transformer...")
                 transformer = QuantizedFluxTransformer2DModel.from_pretrained("cocktailpeanut/flux1-merged-q8")
+                print("initialized!")
         else:
             bfl_repo = "cocktailpeanut/xulf-s"
             if device == "mps":
