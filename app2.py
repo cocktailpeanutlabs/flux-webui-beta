@@ -63,7 +63,7 @@ def infer(prompt, checkpoint="black-forest-labs/FLUX.1-schnell", seed=42, num_im
             print("4")
             pipe.transformer = transformer
             print("5")
-#        pipe.to(device)
+        pipe.to(device)
         if device == "cuda":
             pipe.enable_model_cpu_offload()
         print("9")
@@ -102,7 +102,7 @@ with gr.Blocks(css=css) as demo:
                 container=False,
             )
             run_button = gr.Button("Run", scale=0)
-        result = gr.Gallery(label="Result", show_label=False)
+        result = gr.Gallery(label="Result", show_label=False, object_fit: "contain")
         checkpoint = gr.Dropdown(
           label="Model",
           value= "black-forest-labs/FLUX.1-schnell",
